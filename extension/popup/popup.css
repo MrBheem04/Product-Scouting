@@ -1,0 +1,130 @@
+/* Extension Popup Stylesheet */
+body {
+  width: 280px;
+  margin: 0;
+  padding: 15px;
+  background-color: #0b0f19;
+  color: #f1f5f9;
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+}
+
+.logo span {
+  color: #a78bfa;
+}
+
+.badge {
+  font-size: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  color: #a78bfa;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Search bar */
+.search-box {
+  display: flex;
+  gap: 6px;
+}
+
+#popup-search {
+  flex-grow: 1;
+  background-color: #020617;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  outline: none;
+}
+
+#popup-search:focus {
+  border-color: #8b5cf6;
+}
+
+#search-btn {
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Stats Card */
+.stats-card {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-label {
+  font-size: 8px;
+  font-weight: bold;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.active-badge {
+  color: #10b981;
+  font-weight: bold;
+}
+
+.count-badge {
+  color: #8b5cf6;
+  font-weight: bold;
+}
+
+/* Footer Link */
+.dashboard-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: #a78bfa;
+  font-size: 10px;
+  font-weight: bold;
+  padding-top: 5px;
+  transition: color 0.2s;
+}
+
+.dashboard-link:hover {
+  color: #ffffff;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <div class="popup-container">
+      <!-- Header -->
+      <div class="header">
+        <span class="logo">⚡ Scout<span>Price</span></span>
+        <span class="badge">V3 active</span>
+      </div>
+
+      <!-- Quick Search Tool -->
+      <div class="search-box">
+        <input type="text" id="popup-search" placeholder="Quick search tracked items...">
+        <button id="search-btn">Find</button>
+      </div>
+
+      <!-- Quick Stats / Status -->
+      <div class="stats-card">
+        <span class="card-label">ACTIVE PLATFORM STATUS</span>
+        <div class="status-row">
+          <span>Server Connections</span>
+          <span class="active-badge">Online</span>
+        </div>
+        <div class="status-row">
+          <span>Active Watchers</span>
+          <span class="count-badge">5 active</span>
+        </div>
+      </div>
+
+      <!-- Direct links -->
+      <div className="footer-links">
+        <a href="http://localhost:5173/dashboard" target="_blank" class="dashboard-link">Open Dashboard &rarr;</a>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
