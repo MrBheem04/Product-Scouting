@@ -93,7 +93,7 @@ export default function ProductDetails() {
 
   const storeFormatted = product.store.charAt(0).toUpperCase() + product.store.slice(1);
   const token = localStorage.getItem('token') || '';
-  const redirectUrl = `/api/affiliate/redirect?productId=${product._id}&store=${product.store}&url=${encodeURIComponent(product.originalUrl)}&token=${token}`;
+  const redirectUrl = `/api/affiliate/redirect?productId=${product._id}&store=${product.store}&url=${encodeURIComponent(product.originalUrl)}&token=${token}&_cb=${Date.now()}`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen text-slate-100 font-sans space-y-8">
@@ -109,7 +109,9 @@ export default function ProductDetails() {
           <span className="absolute top-4 left-4 px-2.5 py-1 text-[10px] font-bold text-white rounded-full bg-brand-600 uppercase tracking-widest">
             {storeFormatted}
           </span>
-          <img src={product.image} alt={product.title} className="w-full h-72 object-cover rounded-xl shadow-lg mb-6" />
+          <div className="w-full h-72 rounded-xl bg-slate-950/40 overflow-hidden flex items-center justify-center mb-6 border border-white/5">
+            <img src={product.image} alt={product.title} className="max-w-full max-h-full object-contain p-2" />
+          </div>
           <a
             href={redirectUrl}
             target="_blank"
@@ -203,29 +205,29 @@ export default function ProductDetails() {
             <span className="text-xs font-bold text-white uppercase tracking-wider block pb-2 border-b border-white/5">Product Specifications</span>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs">
               <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-slate-450">Brand</span>
+                <span className="text-slate-400">Brand</span>
                 <span className="text-slate-200 font-bold">{product.title.split(' ')[0]}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-slate-450">Category</span>
+                <span className="text-slate-400">Category</span>
                 <span className="text-slate-200 font-bold capitalize">{product.category}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-slate-450">Platform Store</span>
+                <span className="text-slate-400">Platform Store</span>
                 <span className="text-slate-200 font-bold capitalize">{product.store}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-slate-450">Stock Availability</span>
-                <span className={`font-bold ${product.availability ? 'text-emerald-400' : 'text-rose-455'}`}>
+                <span className="text-slate-400">Stock Availability</span>
+                <span className={`font-bold ${product.availability ? 'text-emerald-400' : 'text-rose-500'}`}>
                   {product.availability ? 'In Stock' : 'Out of Stock'}
                 </span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-slate-450">Last Synced</span>
+                <span className="text-slate-400">Last Synced</span>
                 <span className="text-slate-200 font-semibold">{new Date(product.lastScrapedAt).toLocaleString()}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-slate-450">Rating Index</span>
+                <span className="text-slate-400">Rating Index</span>
                 <span className="text-slate-200 font-bold">{product.ratings} / 5.0</span>
               </div>
             </div>

@@ -31,27 +31,42 @@ router.get('/redirect', async (req, res) => {
       product: productId,
       store,
       userId,
-      url: decodeURIComponent(url)
+      url: url // Express query parser already decodes the outer query. Redundant double-decoding causes space/special char errors.
     });
 
     // Fetch store metadata to check if affiliate key or tag exists
-    let targetUrl = decodeURIComponent(url);
+    let targetUrl = url;
     const storeMeta = await Store.findOne({ name: store });
     
     if (storeMeta && storeMeta.affiliateTag) {
       try {
         const parsedUrl = new URL(targetUrl);
         if (store === 'amazon') {
-          parsedUrl.searchParams.set('tag', storeMeta.affiliateTag);
-          targetUrl = parsedUrl.toString();
+          if (storeMeta.affiliateTag && storeMeta.affiliateTag !== 'scoutprice-21') {
+            parsedUrl.searchParams.set('tag', storeMeta.affiliateTag);
+            targetUrl = parsedUrl.toString();
+          }
         } else if (store === 'flipkart') {
-          parsedUrl.searchParams.set('affid', storeMeta.affiliateTag);
-          targetUrl = parsedUrl.toString();
+          if (storeMeta.affiliateTag && storeMeta.affiliateTag !== 'scoutprice-aff') {
+            parsedUrl.searchParams.set('affid', storeMeta.affiliateTag);
+            targetUrl = parsedUrl.toString();
+          }
         }
       } catch (e) {
         // fallback to original url if parsing fails
       }
     }
+
+    // Escape double quotes for safe embedding in HTML attributes
+    const escapedTargetUrl = targetUrl.replace(/"/g, '&quot;');
+
+    // Prevent browser from caching redirection responses
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
+    // Force browser to strip the referrer header
+    res.setHeader('Referrer-Policy', 'no-referrer');
 
     // Return a referrer-shield page to strip referrer headers and avoid CDN blocks
     res.setHeader('Content-Type', 'text/html');
@@ -61,6 +76,7 @@ router.get('/redirect', async (req, res) => {
         <head>
           <meta charset="utf-8">
           <meta name="referrer" content="no-referrer">
+          <meta http-equiv="refresh" content="0; url=${escapedTargetUrl}">
           <title>Connecting to Store...</title>
           <style>
             body {
@@ -91,23 +107,55 @@ router.get('/redirect', async (req, res) => {
               font-size: 14px;
               font-weight: 500;
               opacity: 0.9;
+              margin-bottom: 5px;
+            }
+            .btn {
+              margin-top: 15px;
+              padding: 10px 20px;
+              background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+              color: white;
+              text-decoration: none;
+              border-radius: 8px;
+              font-size: 12px;
+              font-weight: bold;
+              box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+              transition: opacity 0.2s;
+            }
+            .btn:hover {
+              opacity: 0.9;
             }
           </style>
-          <script>
-            window.onload = function() {
-              window.location.replace(${JSON.stringify(targetUrl)});
-            };
-          </script>
         </head>
         <body>
           <div class="loader"></div>
           <p>Redirecting to merchant store...</p>
+          <a href="${escapedTargetUrl}" rel="noreferrer" id="redirect-link" class="btn">Click here if not redirected</a>
+          
+          <script>
+            // Programmatically trigger a click on the noreferrer link to strip referrer headers
+            setTimeout(function() {
+              try {
+                var btn = document.getElementById('redirect-link');
+                btn.click();
+              } catch(e) {
+                window.location.replace(${JSON.stringify(targetUrl)});
+              }
+            }, 50);
+          </script>
         </body>
       </html>
     `);
   } catch (error) {
     console.error('[Affiliate] Redirect error:', error);
-    const fallbackUrl = decodeURIComponent(url);
+    const fallbackUrl = url;
+    const escapedFallbackUrl = fallbackUrl.replace(/"/g, '&quot;');
+    
+    // Prevent browser from caching redirection responses
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    
     res.setHeader('Content-Type', 'text/html');
     return res.send(`
       <!DOCTYPE html>
@@ -115,13 +163,21 @@ router.get('/redirect', async (req, res) => {
         <head>
           <meta charset="utf-8">
           <meta name="referrer" content="no-referrer">
-          <script>
-            window.onload = function() {
-              window.location.replace(${JSON.stringify(fallbackUrl)});
-            };
-          </script>
+          <meta http-equiv="refresh" content="0; url=${escapedFallbackUrl}">
+          <title>Redirecting...</title>
         </head>
-        <body></body>
+        <body>
+          <a href="${escapedFallbackUrl}" rel="noreferrer" id="redirect-link">Click here to proceed</a>
+          <script>
+            setTimeout(function() {
+              try {
+                document.getElementById('redirect-link').click();
+              } catch(e) {
+                window.location.replace(${JSON.stringify(fallbackUrl)});
+              }
+            }, 50);
+          </script>
+        </body>
       </html>
     `);
   }

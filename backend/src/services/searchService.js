@@ -136,6 +136,11 @@ async function searchProducts({ query, category, store, sort, page = 1, limit = 
     }
   }
 
+  let formattedCategory = category;
+  if (category && typeof category === 'string') {
+    formattedCategory = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+  }
+
   if (useElastic && client) {
     try {
       const must = [];
@@ -152,7 +157,7 @@ async function searchProducts({ query, category, store, sort, page = 1, limit = 
       }
       
       const filter = [];
-      if (category) filter.push({ term: { category } });
+      if (formattedCategory) filter.push({ term: { category: formattedCategory } });
       if (store) filter.push({ term: { store } });
 
       let sortOption = [];
@@ -205,7 +210,7 @@ async function searchProducts({ query, category, store, sort, page = 1, limit = 
   if (query) {
     mongoQuery.$text = { $search: query };
   }
-  if (category) mongoQuery.category = category;
+  if (formattedCategory) mongoQuery.category = formattedCategory;
   if (store) mongoQuery.store = store;
 
   let sortOption = {};

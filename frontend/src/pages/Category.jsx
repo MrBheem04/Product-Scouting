@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Smartphone, Shirt, Footprints, Sparkles, AlertCircle } from 'lucide-react';
+import { Smartphone, Shirt, Footprints, Sparkles, Activity, AlertCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 
 export default function Category() {
@@ -13,7 +13,8 @@ export default function Category() {
     { name: 'electronics', label: 'Electronics', icon: Smartphone, color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
     { name: 'apparel', label: 'Apparel', icon: Shirt, color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
     { name: 'footwear', label: 'Footwear', icon: Footprints, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
-    { name: 'accessories', label: 'Accessories', icon: Sparkles, color: 'text-pink-400 bg-pink-500/10 border-pink-500/20' }
+    { name: 'accessories', label: 'Accessories', icon: Sparkles, color: 'text-pink-400 bg-pink-500/10 border-pink-500/20' },
+    { name: 'fitness', label: 'Fitness & Sports', icon: Activity, color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' }
   ];
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function Category() {
       </div>
 
       {/* Category selector row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {categoriesList.map((cat) => {
           const Icon = cat.icon;
           const isActive = selectedCategory === cat.name;

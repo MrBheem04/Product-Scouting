@@ -8,6 +8,7 @@ const Comparison = require('../models/Comparison');
 const Alert = require('../models/Alert');
 const Store = require('../models/Store');
 const Category = require('../models/Category');
+const { getUrlsForSku } = require('./productUrls');
 
 const SEED_PRODUCTS = [
   {
@@ -55,7 +56,7 @@ const SEED_PRODUCTS = [
   {
     title: 'Noise ColorFit Icon 2 Smartwatch (Bluetooth Calling)',
     sku: 'FPK-NOISE2',
-    originalUrl: 'https://www.flipkart.com/noise-colorfit-icon-2-1-8-display-bluetooth-calling-ai-voice-assistant-smartwatch/p/itm5b94e33d0774a',
+    originalUrl: 'https://www.flipkart.com/noise-colorfit-icon-2-1-8-display-bluetooth-calling-ai-voice-assistance-smartwatch/p/itmfa97e2fcabed9',
     store: 'flipkart',
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600',
     currentPrice: 1499,
@@ -83,12 +84,12 @@ const SEED_PRODUCTS = [
   {
     title: 'Roadster Men Black Solid Round Neck T-shirt',
     sku: 'MYN-ROADSTER',
-    originalUrl: 'https://www.myntra.com/roadster-men-tshirts',
+    originalUrl: 'https://www.myntra.com/tshirts/roadster/the-roadster-lifestyle-co-men-black-typography-printed-pure-cotton-t-shirt/13620730/buy',
     store: 'myntra',
     image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=600',
-    currentPrice: 399,
+    currentPrice: 251,
     originalPrice: 799,
-    discountPercent: 50,
+    discountPercent: 69,
     ratings: 4.1,
     ratingsCount: 180,
     category: 'Apparel',
@@ -97,12 +98,12 @@ const SEED_PRODUCTS = [
   {
     title: 'Puma Men Black Wallet (Sport Edition)',
     sku: 'MYN-PUMAWT',
-    originalUrl: 'https://www.myntra.com/puma-wallet',
+    originalUrl: 'https://www.myntra.com/wallets/puma/puma-leather-plain-bi-fold-wallet/25815670/buy',
     store: 'myntra',
-    image: 'https://images.unsplash.com/photo-1590564313991-26741b4c4b2b?auto=format&fit=crop&q=80&w=600',
-    currentPrice: 799,
-    originalPrice: 1499,
-    discountPercent: 47,
+    image: 'https://images.unsplash.com/photo-1627124709933-f7759b8ebabd?auto=format&fit=crop&q=80&w=600',
+    currentPrice: 1399,
+    originalPrice: 1999,
+    discountPercent: 30,
     ratings: 4.2,
     ratingsCount: 340,
     category: 'Accessories',
@@ -110,13 +111,13 @@ const SEED_PRODUCTS = [
   },
   {
     title: 'boAt Airdopes 131 M Wireless Earbuds',
-    sku: 'AJI-BOAT131',
-    originalUrl: 'https://www.ajio.com/search/?text=boAt%20Airdopes%20131',
-    store: 'ajio',
+    sku: 'AMZ-BOAT131',
+    originalUrl: 'https://www.amazon.in/Airdopes-131-Technology-Bluetooth-Immersive/dp/B088FKCD4J?th=1',
+    store: 'amazon',
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600',
-    currentPrice: 999,
+    currentPrice: 899,
     originalPrice: 2990,
-    discountPercent: 67,
+    discountPercent: 70,
     ratings: 4.4,
     ratingsCount: 650,
     category: 'Electronics',
@@ -125,12 +126,12 @@ const SEED_PRODUCTS = [
   {
     title: 'Nike Air Max SYSTM Lace-Up Sneakers',
     sku: 'AJI-NIKEAM',
-    originalUrl: 'https://www.ajio.com/search/?text=Nike%20Air%20Max%20SYSTM',
+    originalUrl: 'https://www.ajio.com/nike-sb-heritage-vulc-lace-up-sneakers/p/469812812_gray?',
     store: 'ajio',
     image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&q=80&w=600',
-    currentPrice: 7736,
+    currentPrice: 2748,
     originalPrice: 8595,
-    discountPercent: 10,
+    discountPercent: 68,
     ratings: 4.5,
     ratingsCount: 880,
     category: 'Footwear',
@@ -139,16 +140,100 @@ const SEED_PRODUCTS = [
   {
     title: 'Trendz Banarasi Silk Saree (Traditional Edition)',
     sku: 'MSH-SAREE',
-    originalUrl: 'https://www.meesho.com/search?q=Trendz%20Banarasi%20Silk%20Saree',
+    originalUrl: 'https://www.meesho.com/banarasi-silk-saree/p/etrjb2',
     store: 'meesho',
     image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600',
-    currentPrice: 499,
+    currentPrice: 400,
     originalPrice: 1499,
-    discountPercent: 67,
+    discountPercent: 73,
     ratings: 4.4,
     ratingsCount: 145,
     category: 'Apparel',
     keywords: ['saree', 'silk', 'apparel', 'traditional', 'women']
+  },
+  {
+    title: 'Samsung Galaxy S24 Ultra (Titanium Gray, 256GB)',
+    sku: 'AMZ-S24ULTRA',
+    originalUrl: 'https://www.amazon.in/Samsung-Galaxy-Smartphone-Titanium-Storage/dp/B0CS5XW6TN',
+    store: 'amazon',
+    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&q=80&w=600',
+    currentPrice: 129999,
+    originalPrice: 134999,
+    discountPercent: 3,
+    ratings: 4.7,
+    ratingsCount: 450,
+    category: 'Electronics',
+    keywords: ['samsung', 'galaxy', 's24', 'phone', 'smartphone', 'mobile']
+  },
+  {
+    title: 'Apple 2024 MacBook Air M3 Laptop (8GB RAM, 256GB SSD)',
+    sku: 'FPK-MBAIRM3',
+    originalUrl: 'https://www.flipkart.com/apple-macbook-air-m3-8-gb-256-gb-ssd-macos-sonoma-mryr3hn-a/p/itmab284bf2e06ed',
+    store: 'flipkart',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=600',
+    currentPrice: 131990,
+    originalPrice: 139900,
+    discountPercent: 6,
+    ratings: 4.8,
+    ratingsCount: 320,
+    category: 'Electronics',
+    keywords: ['macbook', 'apple', 'laptop', 'm3', 'notebook']
+  },
+  {
+    title: 'Levi\'s Men\'s 511 Slim Fit Mild Wash Jeans',
+    sku: 'MYN-LEVIS511',
+    originalUrl: 'https://www.myntra.com/jeans/levis/levis-men-527-slim-bootcut-stretchable-light-fade-jeans/38810791/buy',
+    store: 'myntra',
+    image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&q=80&w=600',
+    currentPrice: 1849,
+    originalPrice: 4199,
+    discountPercent: 56,
+    ratings: 4.2,
+    ratingsCount: 920,
+    category: 'Apparel',
+    keywords: ['jeans', 'levis', 'denim', 'clothing', 'apparel', 'pants']
+  },
+  {
+    title: 'Adidas Originals Men\'s Superstar Sneakers (White/Black)',
+    sku: 'AJI-ADISUPER',
+    originalUrl: 'https://www.ajio.com/adidas-originals-men-drop-step-low-2-0-lace-up-sneakers/p/469818951_white',
+    store: 'ajio',
+    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=600',
+    currentPrice: 8599,
+    originalPrice: 9999,
+    discountPercent: 14,
+    ratings: 4.5,
+    ratingsCount: 510,
+    category: 'Footwear',
+    keywords: ['adidas', 'superstar', 'sneakers', 'shoes', 'footwear']
+  },
+  {
+    title: 'Fastrack Men\'s Polarized Rectangular Sunglasses',
+    sku: 'MYN-FSTRKSG',
+    originalUrl: 'https://www.myntra.com/sunglasses/fastrack/fastrack-men-uv-protected-lens-rectangle-sunglasses---p448br7v-brown/40469663/buy',
+    store: 'myntra',
+    image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=600',
+    currentPrice: 849,
+    originalPrice: 999,
+    discountPercent: 15,
+    ratings: 4.0,
+    ratingsCount: 220,
+    category: 'Accessories',
+    keywords: ['sunglasses', 'fastrack', 'shades', 'accessories']
+  },
+  {
+    title: 'Kore DM 20kg Combo Home Gym Dumbbell Set',
+    sku: 'AMZ-KOREDB',
+    originalUrl: 'https://www.amazon.in/gp/aw/d/B0BDS4LHN5/?_encoding=UTF8&pd_rd_plhdr=t&aaxitk=dbd03c42f34f47591826d1e38ffbf7e1&hsa_cr_id=0&qid=1780110011&sr=1-1-e0fa1fdd-d857-4087-adda-5bd576b25987&aref=yrPY8wkiJM&ref_=sbx_s_sparkle_sbtcd_asin_0_img&pd_rd_w=3kKSh&content-id=amzn1.sym.9269eab1-ae85-443b-9ec2-b2fa4ebaad05%3Aamzn1.sym.9269eab1-ae85-443b-9ec2-b2fa4ebaad05&pf_rd_p=9269eab1-ae85-443b-9ec2-b2fa4ebaad05&pf_rd_r=MJ0MR6FVJ3ZQ1PB5D2GA&pd_rd_wg=pGziT&pd_rd_r=91b0a208-dfe2-4352-b0a8-64d874b18e35&th=1',
+    store: 'amazon',
+    image: 'https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?auto=format&fit=crop&q=80&w=600',
+    currentPrice: 1929,
+    originalPrice: 2990,
+    discountPercent: 35,
+    ratings: 4.0,
+    ratingsCount: 4320,
+    category: 'Fitness',
+    keywords: ['dumbbells', 'gym', 'fitness', 'weights', 'kore']
   }
 ];
 
@@ -231,7 +316,8 @@ const runSeeder = async () => {
       { name: 'electronics', displayName: 'Electronics' },
       { name: 'apparel', displayName: 'Apparel' },
       { name: 'footwear', displayName: 'Footwear' },
-      { name: 'accessories', displayName: 'Accessories' }
+      { name: 'accessories', displayName: 'Accessories' },
+      { name: 'fitness', displayName: 'Fitness' }
     ]);
     
     // Create Users
@@ -313,52 +399,44 @@ const runSeeder = async () => {
     for (const prod of allProducts) {
       const basePrice = prod.currentPrice;
       const cleanTitle = prod.title;
+      const storeUrls = getUrlsForSku(prod.sku);
       
+      const storesToInclude = [];
+      const defaultStoreConfigs = {
+        amazon: { rating: 4.5, deliveryCharges: basePrice > 499 ? 0 : 40, priceFactor: -0.01 },
+        flipkart: { rating: 4.3, deliveryCharges: basePrice > 500 ? 0 : 40, priceFactor: -0.03 },
+        myntra: { rating: 4.2, deliveryCharges: 0, priceFactor: -0.02 },
+        ajio: { rating: 4.1, deliveryCharges: 59, priceFactor: -0.02 },
+        meesho: { rating: 3.9, deliveryCharges: basePrice > 299 ? 0 : 45, priceFactor: -0.04 }
+      };
+
+      for (const [storeName, config] of Object.entries(defaultStoreConfigs)) {
+        const hasMappedUrl = storeUrls && storeUrls.urls && storeUrls.urls[storeName];
+        if (prod.store === storeName || hasMappedUrl) {
+          let storePrice;
+          if (prod.store === storeName) {
+            storePrice = basePrice;
+          } else if (storeUrls && storeUrls.prices && storeUrls.prices[storeName]) {
+            storePrice = storeUrls.prices[storeName];
+          } else {
+            storePrice = Math.round(basePrice * (1 + (Math.random() * 0.04 + config.priceFactor)));
+          }
+
+          storesToInclude.push({
+            storeName,
+            price: storePrice,
+            url: prod.store === storeName ? prod.originalUrl : storeUrls.urls[storeName],
+            deliveryCharges: config.deliveryCharges,
+            rating: config.rating,
+            availability: true
+          });
+        }
+      }
+
       await Comparison.create({
         title: cleanTitle,
         category: prod.category,
-        stores: [
-          {
-            storeName: 'amazon',
-            price: prod.store === 'amazon' ? basePrice : Math.round(basePrice * (1 + (Math.random() * 0.04 - 0.01))),
-            url: prod.store === 'amazon' ? prod.originalUrl : `https://www.amazon.in/s?k=${encodeURIComponent(cleanTitle)}`,
-            deliveryCharges: basePrice > 499 ? 0 : 40,
-            rating: 4.5,
-            availability: true
-          },
-          {
-            storeName: 'flipkart',
-            price: prod.store === 'flipkart' ? basePrice : Math.round(basePrice * (1 + (Math.random() * 0.04 - 0.03))),
-            url: prod.store === 'flipkart' ? prod.originalUrl : `https://www.flipkart.com/search?q=${encodeURIComponent(cleanTitle)}`,
-            deliveryCharges: basePrice > 500 ? 0 : 40,
-            rating: 4.3,
-            availability: true
-          },
-          {
-            storeName: 'myntra',
-            price: prod.store === 'myntra' ? basePrice : Math.round(basePrice * (1 + (Math.random() * 0.04 - 0.02))),
-            url: prod.store === 'myntra' ? prod.originalUrl : `https://www.myntra.com/search?q=${encodeURIComponent(cleanTitle)}`,
-            deliveryCharges: 0,
-            rating: 4.2,
-            availability: true
-          },
-          {
-            storeName: 'ajio',
-            price: prod.store === 'ajio' ? basePrice : Math.round(basePrice * (1 + (Math.random() * 0.04 - 0.02))),
-            url: prod.store === 'ajio' ? prod.originalUrl : `https://www.ajio.com/search/?text=${encodeURIComponent(cleanTitle)}`,
-            deliveryCharges: 59,
-            rating: 4.1,
-            availability: true
-          },
-          {
-            storeName: 'meesho',
-            price: prod.store === 'meesho' ? basePrice : Math.round(basePrice * (1 + (Math.random() * 0.04 - 0.04))),
-            url: prod.store === 'meesho' ? prod.originalUrl : `https://www.meesho.com/search?q=${encodeURIComponent(cleanTitle)}`,
-            deliveryCharges: basePrice > 299 ? 0 : 45,
-            rating: 3.9,
-            availability: true
-          }
-        ]
+        stores: storesToInclude
       });
     }
     

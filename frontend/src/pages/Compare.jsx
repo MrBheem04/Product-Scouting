@@ -149,7 +149,7 @@ export default function Compare() {
                   const finalTotal = item.price + item.deliveryCharges;
                   const isCheapest = item.storeName === comparison.cheapestStore;
                   const token = localStorage.getItem('token') || '';
-                  const redirectUrl = `/api/affiliate/redirect?productId=${comparison.productId || ''}&store=${item.storeName}&url=${encodeURIComponent(item.url)}&token=${token}`;
+                  const redirectUrl = `/api/affiliate/redirect?productId=${comparison.productId || ''}&store=${item.storeName}&url=${encodeURIComponent(item.url)}&token=${token}&_cb=${Date.now()}`;
 
                   return (
                     <tr

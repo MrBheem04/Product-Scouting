@@ -48,45 +48,47 @@ export default function PriceChart({ history = [] }) {
   };
 
   return (
-    <div className="w-full h-72">
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-          <defs>
-            <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.0} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-          <XAxis
-            dataKey="date"
-            stroke="#64748b"
-            fontSize={10}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis
-            stroke="#64748b"
-            fontSize={10}
-            domain={['auto', 'auto']}
-            tickLine={false}
-            axisLine={false}
-            tickFormatter={(value) => `₹${value}`}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Area
-            type="monotone"
-            dataKey="Price"
-            stroke="#a78bfa"
-            strokeWidth={3}
-            fillOpacity={1}
-            fill="url(#priceGradient)"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+    <div className="w-full space-y-4">
+      <div className="w-full h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <defs>
+              <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+            <XAxis
+              dataKey="date"
+              stroke="#64748b"
+              fontSize={10}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              stroke="#64748b"
+              fontSize={10}
+              domain={['auto', 'auto']}
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(value) => `₹${value}`}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="Price"
+              stroke="#a78bfa"
+              strokeWidth={3}
+              fillOpacity={1}
+              fill="url(#priceGradient)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
       
       {/* Visual Indicator Metrics Bar */}
-      <div className="grid grid-cols-3 gap-2 mt-4 text-center">
+      <div className="grid grid-cols-3 gap-2 text-center">
         <div className="py-2.5 bg-slate-900/30 border border-white/5 rounded-xl">
           <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-medium">Historical Low</span>
           <span className="text-sm font-black text-emerald-400">INR {lowest.toLocaleString()}</span>

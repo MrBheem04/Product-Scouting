@@ -41,6 +41,14 @@ app.use(cors({
 
 app.use(express.json());
 
+// Prevent browser from caching API responses locally
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 // Global Rate Limiting
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
@@ -115,3 +123,4 @@ connectDB().then(() => {
 });
 
 module.exports = { app, server };
+// Nodemon trigger comment to clear in-memory caches.

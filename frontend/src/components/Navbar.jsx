@@ -87,11 +87,11 @@ export default function Navbar() {
                 </div>
                 
                 {/* Navigation actions */}
-                <Link to="/wishlist" className="p-2 text-slate-450 hover:text-white bg-slate-900 border border-white/5 rounded-xl hover:bg-slate-800 transition-colors" title="My Wishlist">
-                  <Heart className="w-4 h-4 text-rose-550 fill-rose-500/10" />
+                <Link to="/wishlist" className="p-2 text-slate-400 hover:text-white bg-slate-900 border border-white/5 rounded-xl hover:bg-slate-800 transition-colors" title="My Wishlist">
+                  <Heart className="w-4 h-4 text-rose-500 fill-rose-500/10" />
                 </Link>
 
-                <Link to="/alerts" className="p-2 text-slate-450 hover:text-white bg-slate-900 border border-white/5 rounded-xl hover:bg-slate-800 transition-colors" title="Price Alerts">
+                <Link to="/alerts" className="p-2 text-slate-400 hover:text-white bg-slate-900 border border-white/5 rounded-xl hover:bg-slate-800 transition-colors" title="Price Alerts">
                   <Bell className="w-4 h-4 text-brand-400" />
                 </Link>
 

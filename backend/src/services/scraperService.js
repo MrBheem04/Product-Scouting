@@ -56,25 +56,57 @@ const scrapeProduct = async (url, store) => {
 };
 
 /**
- * Puppeteer Scraper Core Implementation
+ * Shared Puppeteer browser instance management to optimize resource usage
+ */
+let sharedBrowser = null;
+let browserLaunchPromise = null;
+
+const getSharedBrowser = async () => {
+  if (sharedBrowser && sharedBrowser.isConnected()) {
+    return sharedBrowser;
+  }
+  if (browserLaunchPromise) {
+    return browserLaunchPromise;
+  }
+
+  console.log('[Scraper] Launching a new shared Puppeteer browser instance...');
+  browserLaunchPromise = puppeteer.launch({
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu',
+      '--window-size=1920,1080'
+    ],
+    defaultViewport: null
+  }).then(b => {
+    sharedBrowser = b;
+    browserLaunchPromise = null;
+    b.on('disconnected', () => {
+      console.log('[Scraper] Shared Puppeteer browser disconnected.');
+      sharedBrowser = null;
+    });
+    return b;
+  }).catch(err => {
+    browserLaunchPromise = null;
+    throw err;
+  });
+
+  return browserLaunchPromise;
+};
+
+/**
+ * Puppeteer Scraper Core Implementation (Reusing Shared Browser)
  */
 const scrapeWithPuppeteer = async (url, store, userAgent) => {
   let browser;
+  let page = null;
   try {
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu',
-        '--window-size=1920,1080'
-      ],
-      defaultViewport: null
-    });
+    browser = await getSharedBrowser();
+    page = await browser.newPage();
     
-    const page = await browser.newPage();
     await page.setUserAgent(userAgent);
     await page.setExtraHTTPHeaders({
       'Accept-Language': 'en-US,en;q=0.9',
@@ -142,7 +174,8 @@ const scrapeWithPuppeteer = async (url, store, userAgent) => {
       sku = pidMatch ? pidMatch[1] : `FPK-${Date.now()}`;
     }
     
-    await browser.close();
+    // Close only the page tab
+    await page.close();
     
     return {
       title,
@@ -156,7 +189,13 @@ const scrapeWithPuppeteer = async (url, store, userAgent) => {
       discountPercent: originalPrice > 0 ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0
     };
   } catch (err) {
-    if (browser) await browser.close();
+    if (page) {
+      try {
+        await page.close();
+      } catch (closeErr) {
+        // ignore close errors
+      }
+    }
     throw err;
   }
 };
@@ -216,7 +255,7 @@ const generateSyntheticData = (url, store) => {
       keywords: ['earphones', 'oneplus', 'bullets', 'audio', 'wireless']
     },
     {
-      urls: ['noise-colorfit-icon-2', 'itm5b94e33d0774a'],
+      urls: ['noise-colorfit-icon-2', 'itm5b94e33d0774a', 'itmfa97e2fcabed9'],
       title: 'Noise ColorFit Icon 2 Smartwatch (Bluetooth Calling)',
       sku: 'FPK-NOISE2',
       store: 'flipkart',
@@ -244,74 +283,156 @@ const generateSyntheticData = (url, store) => {
       keywords: ['iphone', 'apple', 'mobile', 'phone', 'smartphone']
     },
     {
-      urls: ['myntra.com/22900742', '/22900742', '22900742', 'roadster-men-tshirts', 'roadster'],
+      urls: ['myntra.com/22900742', '/22900742', '22900742', '13620730', 'roadster-men-tshirts', 'roadster'],
       title: 'Roadster Men Black Solid Round Neck T-shirt',
       sku: 'MYN-ROADSTER',
       store: 'myntra',
       image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=600',
-      currentPrice: 399,
+      currentPrice: 251,
       originalPrice: 799,
-      discountPercent: 50,
+      discountPercent: 69,
       ratings: 4.1,
       ratingsCount: 180,
       category: 'Apparel',
       keywords: ['shirt', 'tshirt', 'cotton', 'clothing', 'roadster']
     },
     {
-      urls: ['myntra.com/15432120', '/15432120', '15432120', 'puma-wallet', 'puma'],
+      urls: ['myntra.com/15432120', '/15432120', '15432120', '25815670', 'puma-wallet', 'puma'],
       title: 'Puma Men Black Wallet (Sport Edition)',
       sku: 'MYN-PUMAWT',
       store: 'myntra',
-      image: 'https://images.unsplash.com/photo-1590564313991-26741b4c4b2b?auto=format&fit=crop&q=80&w=600',
-      currentPrice: 799,
-      originalPrice: 1499,
-      discountPercent: 47,
+      image: 'https://images.unsplash.com/photo-1627124709933-f7759b8ebabd?auto=format&fit=crop&q=80&w=600',
+      currentPrice: 1399,
+      originalPrice: 1999,
+      discountPercent: 30,
       ratings: 4.2,
       ratingsCount: 340,
       category: 'Accessories',
       keywords: ['wallet', 'puma', 'accessory', 'leather']
     },
     {
-      urls: ['boat-airdopes-131-m', '469273397', 'boat%20airdopes%20131', 'boat airdopes 131', 'airdopes 131'],
+      urls: ['boat-airdopes-131-m', '469273397', 'B088FKCD4J', 'boat%20airdopes%20131', 'boat airdopes 131', 'airdopes 131'],
       title: 'boAt Airdopes 131 M Wireless Earbuds',
-      sku: 'AJI-BOAT131',
-      store: 'ajio',
+      sku: 'AMZ-BOAT131',
+      store: 'amazon',
       image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600',
-      currentPrice: 999,
+      currentPrice: 899,
       originalPrice: 2990,
-      discountPercent: 67,
+      discountPercent: 70,
       ratings: 4.4,
       ratingsCount: 650,
       category: 'Electronics',
       keywords: ['earbuds', 'boat', 'audio', 'wireless']
     },
     {
-      urls: ['nike-air-max-systm', '469315573', 'nike%20air%20max%20systm', 'nike air max systm', 'nike-air-max'],
+      urls: ['nike-air-max-systm', '469315573', '469812812', 'nike%20air%20max%20systm', 'nike air max systm', 'nike-air-max'],
       title: 'Nike Air Max SYSTM Lace-Up Sneakers',
       sku: 'AJI-NIKEAM',
       store: 'ajio',
       image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&q=80&w=600',
-      currentPrice: 7736,
+      currentPrice: 2748,
       originalPrice: 8595,
-      discountPercent: 10,
+      discountPercent: 68,
       ratings: 4.5,
       ratingsCount: 880,
       category: 'Footwear',
       keywords: ['nike', 'air max', 'sneakers', 'running', 'shoes']
     },
     {
-      urls: ['banarasi-silk-sarees', '5i6fbe', 'silk%20saree', 'silk saree', 'silk-saree', 'trendz-exclusive-banarasi'],
+      urls: ['banarasi-silk-sarees', '5i6fbe', 'etrjb2', 'silk%20saree', 'silk saree', 'silk-saree', 'trendz-exclusive-banarasi'],
       title: 'Trendz Banarasi Silk Saree (Traditional Edition)',
       sku: 'MSH-SAREE',
       store: 'meesho',
       image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600',
-      currentPrice: 499,
+      currentPrice: 400,
       originalPrice: 1499,
-      discountPercent: 67,
+      discountPercent: 73,
       ratings: 4.4,
       ratingsCount: 145,
       category: 'Apparel',
       keywords: ['saree', 'silk', 'apparel', 'traditional', 'women']
+    },
+    {
+      urls: ['B0CS57KCQ1', 'B0CS5XW6TN', 's24-ultra', 'samsung-s24', 'samsung galaxy s24 ultra'],
+      title: 'Samsung Galaxy S24 Ultra (Titanium Gray, 256GB)',
+      sku: 'AMZ-S24ULTRA',
+      store: 'amazon',
+      image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&q=80&w=600',
+      currentPrice: 129999,
+      originalPrice: 134999,
+      discountPercent: 3,
+      ratings: 4.7,
+      ratingsCount: 450,
+      category: 'Electronics',
+      keywords: ['samsung', 'galaxy', 's24', 'phone', 'smartphone', 'mobile']
+    },
+    {
+      urls: ['macbook-air-m3', 'itm7e50bc78d38bf', 'itmab284bf2e06ed', 'macbook air m3'],
+      title: 'Apple 2024 MacBook Air M3 Laptop (8GB RAM, 256GB SSD)',
+      sku: 'FPK-MBAIRM3',
+      store: 'flipkart',
+      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=600',
+      currentPrice: 131990,
+      originalPrice: 139900,
+      discountPercent: 6,
+      ratings: 4.8,
+      ratingsCount: 320,
+      category: 'Electronics',
+      keywords: ['macbook', 'apple', 'laptop', 'm3', 'notebook']
+    },
+    {
+      urls: ['levis-511-jeans', 'levis 511', 'levis-511'],
+      title: 'Levi\'s Men\'s 511 Slim Fit Mild Wash Jeans',
+      sku: 'MYN-LEVIS511',
+      store: 'myntra',
+      image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&q=80&w=600',
+      currentPrice: 1849,
+      originalPrice: 4199,
+      discountPercent: 56,
+      ratings: 4.2,
+      ratingsCount: 920,
+      category: 'Apparel',
+      keywords: ['jeans', 'levis', 'denim', 'clothing', 'apparel', 'pants']
+    },
+    {
+      urls: ['adidas-originals-superstar', 'adidas originals superstar', 'adidas-superstar', 'adidas superstar'],
+      title: 'Adidas Originals Men\'s Superstar Sneakers (White/Black)',
+      sku: 'AJI-ADISUPER',
+      store: 'ajio',
+      image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=600',
+      currentPrice: 6299,
+      originalPrice: 8999,
+      discountPercent: 30,
+      ratings: 4.5,
+      ratingsCount: 510,
+      category: 'Footwear',
+      keywords: ['adidas', 'superstar', 'sneakers', 'shoes', 'footwear']
+    },
+    {
+      urls: ['fastrack-rectangular-sunglasses', 'fastrack rectangular sunglasses', 'fastrack-sunglasses'],
+      title: 'Fastrack Men\'s Polarized Rectangular Sunglasses',
+      sku: 'MSH-FSTRKSG',
+      store: 'meesho',
+      image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=600',
+      currentPrice: 699,
+      originalPrice: 999,
+      discountPercent: 30,
+      ratings: 4.0,
+      ratingsCount: 220,
+    },
+    {
+      urls: ['B07WNV6J9C', 'B0BDS4LHN5', 'kore-dumbbell', 'dumbbell-set', 'kore gym'],
+      title: 'Kore DM 20kg Combo Home Gym Dumbbell Set',
+      sku: 'AMZ-KOREDB',
+      store: 'amazon',
+      image: 'https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?auto=format&fit=crop&q=80&w=600',
+      currentPrice: 1929,
+      originalPrice: 2990,
+      discountPercent: 35,
+      ratings: 4.0,
+      ratingsCount: 4320,
+      category: 'Fitness',
+      keywords: ['dumbbells', 'gym', 'fitness', 'weights', 'kore']
     }
   ];
 

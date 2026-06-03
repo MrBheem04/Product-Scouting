@@ -70,4 +70,11 @@ const ProductSchema = new mongoose.Schema({
 ProductSchema.index({ store: 1, sku: 1 }, { unique: true });
 ProductSchema.index({ title: 'text', category: 'text' });
 
+// Optimization indexes for filters and sorting
+ProductSchema.index({ category: 1 });
+ProductSchema.index({ store: 1 });
+ProductSchema.index({ currentPrice: 1 });
+ProductSchema.index({ discountPercent: -1 });
+ProductSchema.index({ ratings: -1 });
+
 module.exports = mongoose.model('Product', ProductSchema);
